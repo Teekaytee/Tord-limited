@@ -400,21 +400,53 @@
 </div>
 
 <script>
-function handleSubmit() {
+async function handleSubmit() {
   const fname = document.getElementById('fname').value.trim();
+  const lname = document.getElementById('lname').value.trim();
   const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
   const service = document.getElementById('service').value;
+  const budget = document.getElementById('budget').value;
+  const message = document.getElementById('message').value.trim();
+
   if (!fname || !email || !service) {
     alert('Please fill in your name, email, and service of interest.');
     return;
   }
+
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
   btn.textContent = 'Sending...';
-  setTimeout(() => {
-    document.getElementById('form-body').style.display = 'none';
-    document.getElementById('form-success').style.display = 'block';
-  }, 1200);
+
+  try {
+    const response = await fetch('https://formspree.io/f/xojbvzaz', {
+      // ↑ Replace xabcdefg with your actual Formspree endpoint
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        'First Name': fname,
+        'Last Name': lname,
+        'Email': email,
+        'Phone': phone,
+        'Service': service,
+        'Budget': budget,
+        'Message': message
+      })
+    });
+
+    if (response.ok) {
+      document.getElementById('form-body').style.display = 'none';
+      document.getElementById('form-success').style.display = 'block';
+    } else {
+      alert('Something went wrong. Please try again or email us directly.');
+      btn.disabled = false;
+      btn.textContent = 'Send Enquiry';
+    }
+  } catch (error) {
+    alert('Network error. Please check your connection and try again.');
+    btn.disabled = false;
+    btn.textContent = 'Send Enquiry';
+  }
 }
 </script>
 </body>
